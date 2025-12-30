@@ -1,80 +1,115 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { db } from "@/lib/db"
-import { getUserFromToken } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
+import { getSessionFromBearerToken } from "@/lib/auth"
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+/* ------------------------------------------------------------------ */
+/* GET PRODUCT BY ID                                                   */
+/* ------------------------------------------------------------------ */
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const { id } = await params
-    const product = db.products.find((p) => p.id === id)
+    const product = await prisma.product.findUnique({ where: { id } })
 
     if (!product) {
-      return NextResponse.json({ success: false, error: "Product not found" }, { status: 404 })
+      return NextResponse.json(
+        { success: false, error: "Product not found" },
+        { status: 404 }
+      )
     }
 
-    return NextResponse.json({
-      success: true,
-      data: { product },
-    })
+    return NextResponse.json({ success: true, data: { product } })
   } catch (error) {
-    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 })
+    console.error(error)
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+/* ------------------------------------------------------------------ */
+/* UPDATE PRODUCT (ADMIN ONLY)                                         */
+/* ------------------------------------------------------------------ */
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const token = request.headers.get("authorization")?.replace("Bearer ", "")
-    const user = token ? getUserFromToken(token) : null
+    const user = token ? await getSessionFromBearerToken(token) : null
 
     if (!user || user.role !== "admin") {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 })
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 403 }
+      )
     }
 
     const { id } = await params
     const body = await request.json()
-    const productIndex = db.products.findIndex((p) => p.id === id)
 
-    if (productIndex === -1) {
-      return NextResponse.json({ success: false, error: "Product not found" }, { status: 404 })
-    }
-
-    db.products[productIndex] = {
-      ...db.products[productIndex],
-      ...body,
-      updatedAt: new Date(),
-    }
-
-    return NextResponse.json({
-      success: true,
-      data: { product: db.products[productIndex] },
+    const updatedProduct = await prisma.product.update({
+      where: { id },
+      data: { ...body, updatedAt: new Date() },
     })
+
+    return NextResponse.json({ success: true, data: { product: updatedProduct } })
   } catch (error) {
-    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 })
+    console.error(error)
+    if ((error as any).code === "P2025") {
+      // Prisma: Record not found
+      return NextResponse.json(
+        { success: false, error: "Product not found" },
+        { status: 404 }
+      )
+    }
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+/* ------------------------------------------------------------------ */
+/* DELETE PRODUCT (ADMIN ONLY)                                         */
+/* ------------------------------------------------------------------ */
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const token = request.headers.get("authorization")?.replace("Bearer ", "")
-    const user = token ? getUserFromToken(token) : null
+    const user = token ? await getSessionFromBearerToken(token) : null
 
     if (!user || user.role !== "admin") {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 })
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 403 }
+      )
     }
 
     const { id } = await params
-    const productIndex = db.products.findIndex((p) => p.id === id)
 
-    if (productIndex === -1) {
-      return NextResponse.json({ success: false, error: "Product not found" }, { status: 404 })
-    }
-
-    db.products.splice(productIndex, 1)
+    await prisma.product.delete({ where: { id } })
 
     return NextResponse.json({
       success: true,
       message: "Product deleted successfully",
     })
   } catch (error) {
-    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 })
+    console.error(error)
+    if ((error as any).code === "P2025") {
+      return NextResponse.json(
+        { success: false, error: "Product not found" },
+        { status: 404 }
+      )
+    }
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }

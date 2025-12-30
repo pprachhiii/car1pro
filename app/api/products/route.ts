@@ -1,7 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { db } from "@/lib/db"
-import { getUserFromToken } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
+import { getSessionFromBearerToken } from "@/lib/auth"
 
+/* ------------------------------------------------------------------ */
+/* GET PRODUCTS WITH FILTERS                                           */
+/* ------------------------------------------------------------------ */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
@@ -9,62 +12,62 @@ export async function GET(request: NextRequest) {
     const featured = searchParams.get("featured")
     const search = searchParams.get("search")
 
-    let products = db.products
+    const where: any = {}
 
-    // Filter by category
-    if (category) {
-      products = products.filter((p) => p.category === category)
-    }
-
-    // Filter by featured
-    if (featured === "true") {
-      products = products.filter((p) => p.featured)
-    }
-
-    // Search
+    if (category) where.category = category
+    if (featured === "true") where.featured = true
     if (search) {
-      const searchLower = search.toLowerCase()
-      products = products.filter(
-        (p) => p.name.toLowerCase().includes(searchLower) || p.description.toLowerCase().includes(searchLower),
-      )
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ]
     }
 
-    return NextResponse.json({
-      success: true,
-      data: { products },
-    })
+    const products = await prisma.product.findMany({ where })
+
+    return NextResponse.json({ success: true, data: { products } })
   } catch (error) {
-    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 })
+    console.error(error)
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }
 
+/* ------------------------------------------------------------------ */
+/* CREATE PRODUCT (ADMIN ONLY)                                         */
+/* ------------------------------------------------------------------ */
 export async function POST(request: NextRequest) {
   try {
     const token = request.headers.get("authorization")?.replace("Bearer ", "")
-    const user = token ? getUserFromToken(token) : null
+    const user = token ? await getSessionFromBearerToken(token) : null
 
     if (!user || user.role !== "admin") {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 })
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 403 }
+      )
     }
 
     const body = await request.json()
-    const product = {
-      id: Date.now().toString(),
-      ...body,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-
-    db.products.push(product)
+    const product = await prisma.product.create({
+      data: {
+        ...body,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    })
 
     return NextResponse.json(
-      {
-        success: true,
-        data: { product },
-      },
-      { status: 201 },
+      { success: true, data: { product } },
+      { status: 201 }
     )
   } catch (error) {
-    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 })
+    console.error(error)
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }

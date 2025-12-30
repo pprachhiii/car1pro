@@ -160,3 +160,13 @@ export async function loginUser(
     return { success: false, error: "Failed to login" }
   }
 }
+
+// auth.ts
+export async function getSessionFromBearerToken(token: string): Promise<SessionUser | null> {
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET)
+    return payload.user as SessionUser
+  } catch {
+    return null
+  }
+}

@@ -1,33 +1,41 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getUserFromToken } from "@/lib/auth"
-import { getCart, clearCart } from "@/lib/cart"
-import { db } from "@/lib/db"
-import type { Order } from "@/lib/types"
+import { prisma } from "@/lib/prisma"
+import { getSessionFromBearerToken } from "@/lib/auth"
 
+/* ------------------------------------------------------------------ */
+/* GET USER ORDERS                                                     */
+/* ------------------------------------------------------------------ */
 export async function GET(request: NextRequest) {
   try {
     const token = request.headers.get("authorization")?.replace("Bearer ", "")
-    const user = token ? getUserFromToken(token) : null
+    const user = token ? await getSessionFromBearerToken(token) : null
 
     if (!user) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
     }
 
-    const orders = db.orders.filter((o) => o.userId === user.id)
-
-    return NextResponse.json({
-      success: true,
-      data: { orders },
+    const orders = await prisma.order.findMany({
+      where: { userId: user.id },
+      include: {
+        items: { include: { product: true } }
+      },
+      orderBy: { createdAt: "desc" }
     })
+
+    return NextResponse.json({ success: true, data: { orders } })
   } catch (error) {
+    console.error(error)
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 })
   }
 }
 
+/* ------------------------------------------------------------------ */
+/* CREATE ORDER (FROM USER CART)                                       */
+/* ------------------------------------------------------------------ */
 export async function POST(request: NextRequest) {
   try {
     const token = request.headers.get("authorization")?.replace("Bearer ", "")
-    const user = token ? getUserFromToken(token) : null
+    const user = token ? await getSessionFromBearerToken(token) : null
 
     if (!user) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
@@ -40,39 +48,43 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 })
     }
 
-    const cart = getCart(user.id)
+    // Use findFirst because userId is not unique
+    const cart = await prisma.cart.findFirst({
+      where: { userId: user.id },
+      include: { items: true }
+    })
 
-    if (cart.items.length === 0) {
+    if (!cart || cart.items.length === 0) {
       return NextResponse.json({ success: false, error: "Cart is empty" }, { status: 400 })
     }
 
-    // Create order
-    const order: Order = {
-      id: Date.now().toString(),
-      userId: user.id,
-      items: cart.items,
-      total: cart.total,
-      status: "pending",
-      shippingAddress,
-      paymentMethod,
-      paymentStatus: "pending",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-
-    db.orders.push(order)
-
-    // Clear cart
-    clearCart(user.id)
-
-    return NextResponse.json(
-      {
-        success: true,
-        data: { order },
+    // Create order with items
+    const order = await prisma.order.create({
+      data: {
+        userId: user.id,
+        total: cart.total,
+        status: "pending",
+        shippingAddress,
+        paymentMethod,
+        paymentStatus: "pending",
+        items: {
+          create: cart.items.map((item) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.price
+          }))
+        }
       },
-      { status: 201 },
-    )
+      include: { items: true }
+    })
+
+    // Clear user's cart
+    await prisma.cartItem.deleteMany({ where: { cartId: cart.id } })
+    await prisma.cart.update({ where: { id: cart.id }, data: { total: 0 } })
+
+    return NextResponse.json({ success: true, data: { order } }, { status: 201 })
   } catch (error) {
+    console.error(error)
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 })
   }
 }
