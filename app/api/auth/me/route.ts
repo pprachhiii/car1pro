@@ -1,16 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getUserFromToken } from "@/lib/auth"
+import { getSessionFromBearerToken } from "@/lib/auth"
 
 export async function GET(request: NextRequest) {
   try {
     const token = request.headers.get("authorization")?.replace("Bearer ", "")
-
     if (!token) {
       return NextResponse.json({ success: false, error: "No token provided" }, { status: 401 })
     }
 
-    const user = await getUserFromToken(token)
-
+    const user = await getSessionFromBearerToken(token)
     if (!user) {
       return NextResponse.json({ success: false, error: "Invalid token" }, { status: 401 })
     }
