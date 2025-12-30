@@ -1,5 +1,5 @@
 import { Footer } from '@/components/footer';
-import { Header } from '@/components/header-client';
+import HeaderWrapper from '@/components/header-wrapper';
 import { Target, Eye, Heart, Award } from 'lucide-react';
 import Image from 'next/image';
 
@@ -29,7 +29,7 @@ export default function AboutPage() {
 
   return (
     <div>
-      <Header/>
+      <HeaderWrapper/>
       {/* Hero Section */}
 {/* Hero Section */}
 <section className="relative h-[450px] w-full text-white">
