@@ -4,6 +4,7 @@ import { ShoppingCart, Menu, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { UserMenu } from "./user-menu"
 import { useCart } from "./card-context"
+import Image from "next/image"
 
 export function HeaderClient({ session }: { session: any }) {
   const { items } = useCart()
@@ -13,11 +14,21 @@ export function HeaderClient({ session }: { session: any }) {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto grid h-16 grid-cols-3 items-center px-4">
         {/* LEFT - LOGO */}
-        <div className="flex items-center">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold tracking-tight">CAR1PRO</span>
-          </Link>
-        </div>
+<div className="flex items-center">
+  <Link href="/" className="flex items-center space-x-2">
+    {/* Logo Image */}
+    <Image
+      src="/logo.jpg"
+      alt="CAR1PRO Logo"
+      width={40}
+      height={40}
+      className="object-contain"
+    />
+    {/* Brand Text */}
+    <span className="text-xl font-bold tracking-tight">CAR1PRO</span>
+  </Link>
+</div>
+
 
         {/* CENTER - NAV */}
         <nav className="hidden md:flex justify-center items-center gap-6">
