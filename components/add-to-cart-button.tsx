@@ -1,7 +1,7 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { useTransition } from "react"
-import { toast } from "react-hot-toast" // install react-hot-toast
+import { toast } from "react-hot-toast" 
 import { addToCart } from "@/app/actions/cart"
 import { useCart } from "./card-context"
 

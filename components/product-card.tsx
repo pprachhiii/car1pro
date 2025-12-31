@@ -13,29 +13,41 @@ interface ProductCardProps {
   inStock: boolean
 }
 
-export function ProductCard({ id, name, slug, description, price, imageUrl, inStock }: ProductCardProps) {
+export function ProductCard({
+  id,
+  name,
+  slug,
+  description,
+  price,
+  imageUrl,
+  inStock,
+}: ProductCardProps) {
   return (
-    <Card className="group overflow-hidden hover:shadow-lg transition-shadow">
-      <Link href={`/products/${slug}`}>
-        <div className="aspect-square overflow-hidden bg-muted">
+    <Card className="group py-0 overflow-hidden hover:shadow-lg transition-shadow">
+      <Link href={`/products/${slug}`} className="block">
+        <div className="aspect-square bg-muted">
           <Image
             src={imageUrl || "/placeholder.svg"}
             alt={name}
             width={400}
             height={400}
-            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+            className="block object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
           />
         </div>
       </Link>
+
       <CardContent className="p-4">
         <Link href={`/products/${slug}`}>
           <h3 className="font-semibold text-base mb-1 group-hover:text-accent transition-colors line-clamp-1">
             {name}
           </h3>
         </Link>
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{description}</p>
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+          {description}
+        </p>
         <p className="text-lg font-bold">${price.toFixed(2)}</p>
       </CardContent>
+
       <CardFooter className="p-4 pt-0">
         <AddToCartButton productId={id} inStock={inStock} />
       </CardFooter>

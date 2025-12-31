@@ -1,10 +1,10 @@
 
-import { Footer } from "@/components/footer"
+import { Footer } from "@/components/common/footer"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Sparkles, Wrench, Package, Phone } from "lucide-react"
 import Link from "next/link"
-import HeaderWrapper from "@/components/header-wrapper"
+import HeaderWrapper from "@/components/common/header-wrapper"
 
 const services = [
   {
@@ -61,14 +61,14 @@ export default function ServicesPage() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="bg-primary text-primary-foreground py-20">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-balance">Professional Detailing Services</h1>
-              <p className="text-lg md:text-xl text-primary-foreground/90 leading-relaxed">
-                Expert care for your vehicle using our premium CAR1PRO product line
-              </p>
-            </div>
-          </div>
+          <div className="relative z-10 container mx-auto px-4 text-center">
+  <h1 className="text-4xl md:text-5xl font-bold mb-4">
+    Professional Detailing Services
+  </h1>
+  <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
+    Expert care for your vehicle using our premium CAR1PRO product line
+  </p>
+</div>
         </section>
 
         {/* Services Grid */}

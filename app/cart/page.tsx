@@ -1,12 +1,12 @@
 
-import { Footer } from "@/components/footer"
+import { Footer } from "@/components/common/footer"
 import { CartItems } from "@/components/cart-items"
 import { getSession } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import HeaderWrapper from "@/components/header-wrapper"
+import HeaderWrapper from "@/components/common/header-wrapper"
 
 export default async function CartPage() {
   const session = await getSession()
@@ -20,7 +20,7 @@ export default async function CartPage() {
     include: {
       items: {
         include: {
-          product: true, // ✅ real product data
+          product: true, 
         },
       },
     },

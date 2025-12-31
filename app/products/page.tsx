@@ -1,9 +1,9 @@
 
-import { Footer } from "@/components/footer"
+import { Footer } from "@/components/common/footer"
 import { ProductCard } from "@/components/product-card"
-import HeaderWrapper from "@/components/header-wrapper"
+import HeaderWrapper from "@/components/common/header-wrapper"
 
-// Mock all products - in production, fetch from database
+// Mock all products 
 const allProducts = [
   // Washing & Cleaning Solutions
   {

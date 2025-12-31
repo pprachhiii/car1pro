@@ -39,16 +39,23 @@ model Product {
   brand       String?
   model       String?
   year        Int?
+
   featured    Boolean  @default(false)
-  inStock     Boolean  @default(true)
-  stock       Int      @default(0)
+  isActive Boolean @default(true)
+  inStock  Boolean @default(true)
+  stock    Int     @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  cartItems CartItem[]
-  orderItems OrderItem[]
-  reviews   Review[]
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+  reviews     Review[]
+
+  @@index([category])
+  @@index([featured])
+  @@index([inStock])
 }
+
 
 model Cart {
   id        String   @id @default(cuid())

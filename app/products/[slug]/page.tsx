@@ -1,13 +1,13 @@
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { Footer } from "@/components/footer"
+import { Footer } from "@/components/common/footer"
 import { AddToCartButton } from "@/components/add-to-cart-button"
 import { Badge } from "@/components/ui/badge"
 import { ChevronLeft, ShieldCheck, Truck, RotateCcw } from "lucide-react"
-import HeaderWrapper from "@/components/header-wrapper"
+import HeaderWrapper from "@/components/common/header-wrapper"
 
-// Mock product data - in production, fetch from database
+// Mock product data 
 const products: Record<string, any> = {
   "premium-car-wash-shampoo": {
     id: "prod_wash_01",

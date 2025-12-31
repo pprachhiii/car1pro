@@ -1,8 +1,8 @@
 ;
-import { Footer } from "@/components/footer";
+import { Footer } from "@/components/common/footer";
 import { ContactForm } from "@/components/contact-form";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
-import HeaderWrapper from "@/components/header-wrapper";
+import HeaderWrapper from "@/components/common/header-wrapper";
 
 export default function ContactPage() {
   return (

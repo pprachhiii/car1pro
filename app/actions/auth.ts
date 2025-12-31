@@ -20,13 +20,10 @@ const loginSchema = z.object({
 })
 
 /* ------------------------------------------------------------------ */
-/* SIGNUP (FIXED for useActionState)                                  */
+/* SIGNUP                                                              */
 /* ------------------------------------------------------------------ */
 
-export async function signup(
-  prevState: { error?: string } | undefined,
-  formData: FormData
-) {
+export async function signup(formData: FormData) {
   const data = {
     name: formData.get("name"),
     email: formData.get("email"),
@@ -38,11 +35,7 @@ export async function signup(
     return { error: parsed.error.errors[0].message }
   }
 
-  const res = await createUser(
-    parsed.data.email,
-    parsed.data.password,
-    parsed.data.name
-  )
+  const res = await createUser(parsed.data.email, parsed.data.password, parsed.data.name)
 
   if (!res.success) {
     return { error: res.error }
@@ -52,13 +45,10 @@ export async function signup(
 }
 
 /* ------------------------------------------------------------------ */
-/* LOGIN                                                              */
+/* LOGIN                                                               */
 /* ------------------------------------------------------------------ */
 
-export async function login(
-  prevState: { error?: string } | undefined,
-  formData: FormData
-) {
+export async function login(formData: FormData) {
   const data = {
     email: formData.get("email"),
     password: formData.get("password"),
@@ -79,7 +69,7 @@ export async function login(
 }
 
 /* ------------------------------------------------------------------ */
-/* LOGOUT                                                             */
+/* LOGOUT                                                              */
 /* ------------------------------------------------------------------ */
 
 export async function logout() {

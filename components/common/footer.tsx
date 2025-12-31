@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Phone, Mail, MapPin, Facebook, Instagram } from "lucide-react"
+import Image from "next/image"
 
 export function Footer() {
   return (
@@ -7,12 +8,26 @@ export function Footer() {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* BRAND */}
-          <div>
-            <h3 className="font-bold text-lg mb-4">CAR1PRO</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Premium automotive care products for enthusiasts and professionals.
-            </p>
-          </div>
+<div>
+  
+  <div className="flex items-end gap-2 mb-3">
+    <Image
+      src="/logo.jpg"
+      alt="CAR1PRO Logo"
+      width={36}
+      height={36}
+    />
+    <span className="text-lg font-bold leading-none">
+      CAR1PRO
+    </span>
+  </div>
+
+  {/* Paragraph */}
+  <p className="text-sm text-muted-foreground leading-relaxed">
+    Premium automotive care products for enthusiasts and professionals.
+  </p>
+</div>
+
 
           {/* PRODUCTS */}
           <div>
@@ -76,7 +91,7 @@ export function Footer() {
               </li>
             </ul>
 
-            {/* SOCIAL ICONS UNDER CONTACT */}
+            {/* SOCIAL ICONS */}
             <div className="flex items-center gap-4">
               <Link href="#" aria-label="Facebook">
                 <Facebook className="h-5 w-5 hover:text-foreground transition-colors" />
@@ -88,7 +103,7 @@ export function Footer() {
           </div>
         </div>
 
-        {/* BOTTOM - ONLY COPYRIGHT */}
+        {/* BOTTOM */}
         <div className="border-t mt-10 pt-6 text-center">
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} CAR1PRO. All rights reserved.

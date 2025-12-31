@@ -7,7 +7,7 @@ import { redirect } from "next/navigation"
 export async function createOrder() {
   const session = await requireAuth()
 
-  // 1️⃣ Fetch cart with items + products
+  // Fetch cart with items + products
   const cart = await prisma.cart.findFirst({
     where: { userId: session.id },
     include: {
@@ -23,12 +23,12 @@ export async function createOrder() {
     return { error: "Cart is empty" }
   }
 
-  // 2️⃣ Calculate total from DB prices
+  // Calculate total from DB prices
   const total = cart.items.reduce((sum, item) => {
     return sum + item.product.price * item.quantity
   }, 0)
 
-  // 3️⃣ Transaction (order + items + stock + clear cart)
+  // Transaction (order + items + stock + clear cart)
   const order = await prisma.$transaction(async (tx) => {
     // Create order
     const order = await tx.order.create({

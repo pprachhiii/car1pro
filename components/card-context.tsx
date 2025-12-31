@@ -10,7 +10,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<number>(0) // <-- type here
+  const [items, setItems] = useState<number>(0) 
 
   return (
     <CartContext.Provider value={{ items, setItems }}>

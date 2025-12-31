@@ -1,17 +1,17 @@
 import Link from "next/link"
 
-import { Footer } from "@/components/footer"
-import { LoginForm } from "@/components/login-form"
+import { Footer } from "@/components/common/footer"
+import { LoginForm } from "@/components/auth/login-form"
 import { getSession } from "@/lib/auth"
 import { redirect } from "next/navigation"
-import HeaderWrapper from "@/components/header-wrapper"
+import HeaderWrapper from "@/components/common/header-wrapper"
 
 export default async function LoginPage() {
   const session = await getSession()
 
-  // If already logged in, redirect to products
+  // If already logged in, redirect to home page
   if (session) {
-    redirect("/products")
+    redirect("/")
   }
 
   return (

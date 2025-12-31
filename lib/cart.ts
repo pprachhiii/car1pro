@@ -28,56 +28,19 @@ export async function getCart(userId: string): Promise<Cart> {
 /* ADD TO CART                                                        */
 /* ------------------------------------------------------------------ */
 
-export async function addToCart(
-  userId: string,
-  productId: string,
-  quantity = 1
-): Promise<ApiResponse<Cart>> {
+export async function addToCart(productId: string, quantity = 1) {
   try {
-    const product = await prisma.product.findUnique({
-      where: { id: productId },
-    })
-
-    if (!product) {
-      return { success: false, error: "Product not found" }
-    }
-
-    if (!product.inStock || product.stock < quantity) {
-      return { success: false, error: "Product out of stock" }
-    }
-
-    const cart = await getCart(userId)
-
-    const existingItem = await prisma.cartItem.findFirst({
-      where: {
-        cartId: cart.id,
-        productId,
+    const res = await fetch("/api/cart", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify({ productId, quantity }),
     })
-
-    if (existingItem) {
-      await prisma.cartItem.update({
-        where: { id: existingItem.id },
-        data: {
-          quantity: existingItem.quantity + quantity,
-        },
-      })
-    } else {
-      await prisma.cartItem.create({
-        data: {
-          cartId: cart.id,
-          productId,
-          quantity,
-          price: product.price,
-        },
-      })
-    }
-
-    const updatedCart = await recalculateCart(cart.id)
-    return { success: true, data: updatedCart }
+    return await res.json()
   } catch (err) {
     console.error(err)
-    return { success: false, error: "Failed to add item to cart" }
+    return { success: false, error: "Failed to add to cart" }
   }
 }
 

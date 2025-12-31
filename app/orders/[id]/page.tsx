@@ -1,5 +1,5 @@
 
-import { Footer } from "@/components/footer"
+import { Footer } from "@/components/common/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle } from "lucide-react"
@@ -7,7 +7,7 @@ import Link from "next/link"
 import { getSession } from "@/lib/auth"
 import { redirect, notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
-import HeaderWrapper from "@/components/header-wrapper"
+import HeaderWrapper from "@/components/common/header-wrapper"
 
 export default async function OrderConfirmationPage({
   params,
@@ -20,7 +20,7 @@ export default async function OrderConfirmationPage({
     redirect("/login")
   }
 
-  // ✅ Fetch order with items + products
+  // Fetch order with items + products
   const order = await prisma.order.findUnique({
     where: { id: params.id },
     include: {
@@ -32,7 +32,7 @@ export default async function OrderConfirmationPage({
     },
   })
 
-  // ✅ Ensure order exists and belongs to user
+  //Ensure order exists and belongs to user
   if (!order || order.userId !== session.id) {
     notFound()
   }

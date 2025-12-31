@@ -95,7 +95,7 @@ export async function createUser(
         email,
         name,
         password: hashedPassword,
-        role: "user", // Prisma role is string
+        role: "user", 
       },
     })
 
@@ -103,7 +103,7 @@ export async function createUser(
       id: user.id,
       email: user.email,
       name: user.name,
-      role: "user", // explicitly narrow type
+      role: "user", 
     })
 
     // Explicitly type safeUser
@@ -111,7 +111,7 @@ export async function createUser(
       id: user.id,
       email: user.email,
       name: user.name,
-      role: "user", // narrow type
+      role: "user", 
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     }
@@ -142,14 +142,14 @@ export async function loginUser(
       id: user.id,
       email: user.email,
       name: user.name,
-      role: user.role === "admin" ? "admin" : "user", // narrow type
+      role: user.role === "admin" ? "admin" : "user", 
     })
 
     const safeUser: Omit<User, "password"> = {
       id: user.id,
       email: user.email,
       name: user.name,
-      role: user.role === "admin" ? "admin" : "user", // narrow type
+      role: user.role === "admin" ? "admin" : "user", 
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     }
@@ -161,7 +161,7 @@ export async function loginUser(
   }
 }
 
-// auth.ts
+
 export async function getSessionFromBearerToken(token: string): Promise<SessionUser | null> {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET)
@@ -169,4 +169,15 @@ export async function getSessionFromBearerToken(token: string): Promise<SessionU
   } catch {
     return null
   }
+}
+
+
+export async function requireAdmin() {
+  const session = await getSession()
+
+  if (!session || session.role !== "admin") {
+    return null
+  }
+
+  return session
 }
