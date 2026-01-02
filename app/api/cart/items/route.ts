@@ -4,6 +4,8 @@ import { getSession } from "@/lib/auth"
 import { getSessionFromBearerToken } from "@/lib/auth"
 import { removeFromCart, updateCartItem } from "@/lib/cart"
 
+export const dynamic = "force-dynamic"
+
 export async function PATCH(request: NextRequest) {
   try {
     const session = await getSession() // reads the HTTP-only cookie
