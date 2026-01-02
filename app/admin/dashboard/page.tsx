@@ -10,7 +10,7 @@ export default async function AdminDashboard() {
   const session = await requireAdmin()
   if (!session) return null
 
-  // DATA QUERIES (DIRECT PRISMA — NO API)
+  // DATA QUERIES (DIRECT PRISMA)
   const totalUsers = await prisma.user.count()
 
   const totalProducts = await prisma.product.count({

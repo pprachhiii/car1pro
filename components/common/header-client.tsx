@@ -9,8 +9,8 @@ import { useCart } from "../card-context"
 import Image from "next/image"
 
 export function HeaderClient({ session }: { session: any }) {
-  const { items } = useCart()
   const [menuOpen, setMenuOpen] = useState(false)
+  const { itemCount } = useCart()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
@@ -43,11 +43,13 @@ export function HeaderClient({ session }: { session: any }) {
           {/* Cart */}
           <Link href="/cart" className="relative">
             <ShoppingCart className="h-5 w-5  hover:text-accent transition-colors hover:scale-110" />
-            {items > 0 && (
-              <span className="absolute -top-1 -right-2 h-5 w-5 rounded-full bg-red-500 text-xs text-white flex items-center justify-center">
-                {items}
-              </span>
-            )}
+
+{itemCount > 0 && (
+  <span className="absolute -top-1 -right-2 h-5 w-5 rounded-full bg-red-500 text-xs text-white flex items-center justify-center">
+    {itemCount}
+  </span>
+)}
+
           </Link>
 
           {/* Desktop User */}

@@ -24,37 +24,40 @@ const loginSchema = z.object({
 /* ------------------------------------------------------------------ */
 
 export async function signup(formData: FormData) {
-  const data = {
+  const parsed = signupSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
-  }
+  })
 
-  const parsed = signupSchema.safeParse(data)
   if (!parsed.success) {
     return { error: parsed.error.errors[0].message }
   }
 
-  const res = await createUser(parsed.data.email, parsed.data.password, parsed.data.name)
+  const res = await createUser(
+    parsed.data.email,
+    parsed.data.password,
+    parsed.data.name
+  )
 
   if (!res.success) {
     return { error: res.error }
   }
 
-  redirect("/products")
+  // new users are customers
+  redirect("/")
 }
+
 
 /* ------------------------------------------------------------------ */
 /* LOGIN                                                               */
 /* ------------------------------------------------------------------ */
-
 export async function login(formData: FormData) {
-  const data = {
+  const parsed = loginSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
-  }
+  })
 
-  const parsed = loginSchema.safeParse(data)
   if (!parsed.success) {
     return { error: parsed.error.errors[0].message }
   }
@@ -65,7 +68,11 @@ export async function login(formData: FormData) {
     return { error: res.error }
   }
 
-  redirect("/products")
+  if (res.data?.role === "admin") {
+    redirect("/admin/dashboard")
+  }
+
+  redirect("/")
 }
 
 /* ------------------------------------------------------------------ */

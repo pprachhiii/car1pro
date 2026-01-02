@@ -1,56 +1,23 @@
 import Link from "next/link"
 import { ProductCard } from "@/components/product-card"
 import { Button } from "@/components/ui/button"
+import { Product } from "@/lib/types"
 
-const featuredProducts = [
-  {
-    id: "prod_wash_01",
-    name: "Premium Car Wash Shampoo",
-    slug: "premium-car-wash-shampoo",
-    description: "pH-balanced formula with advanced foam technology for scratch-free cleaning",
-    price: 24.99,
-    imageUrl: "/car-wash-shampoo-bottle.jpg",
-    inStock: true,
-  },
-  {
-    id: "prod_wash_02",
-    name: "Snow Foam Pre-Wash",
-    slug: "snow-foam-pre-wash",
-    description: "High-density foam formula that loosens dirt before contact washing",
-    price: 29.99,
-    imageUrl: "/snow-foam-bottle.jpg",
-    inStock: true,
-  },
-  {
-    id: "prod_pol_01",
-    name: "Ceramic Coating Spray",
-    slug: "ceramic-coating-spray",
-    description: "Easy-to-apply ceramic protection with 6-month durability",
-    price: 49.99,
-    imageUrl: "/ceramic-coating-spray-bottle.jpg",
-    inStock: true,
-  },
-  {
-    id: "prod_pol_02",
-    name: "Premium Carnauba Wax",
-    slug: "premium-carnauba-wax",
-    description: "Natural Brazilian carnauba wax for deep, warm shine",
-    price: 39.99,
-    imageUrl: "/car-wax-jar.jpg",
-    inStock: true,
-  },
-  {
-    id: "prod_tool_01",
-    name: "Microfiber Towel Set",
-    slug: "microfiber-towel-set",
-    description: "Professional-grade ultra-soft towels, pack of 6",
-    price: 29.99,
-    imageUrl: "/microfiber-towels.png",
-    inStock: true,
-  },
-]
+async function getFeaturedProducts(): Promise<Product[]> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_APP_URL}/api/products?featured=true&limit=5`,
+    { cache: "no-store" }
+  )
 
-export default function FeaturedProductsSection() {
+  if (!res.ok) throw new Error("Failed to fetch featured products")
+
+  const json = await res.json()
+  return json.data.products
+}
+
+export default async function FeaturedProductsSection() {
+  const featuredProducts = await getFeaturedProducts()
+
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">

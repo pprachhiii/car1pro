@@ -23,7 +23,7 @@ export function SignupForm() {
     const result = await signup(formData) 
 
     if (result?.error) setError(result.error)
-    else window.location.href = "/products"
+    
 
     setPending(false)
   }

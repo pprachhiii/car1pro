@@ -28,11 +28,14 @@ model User {
   reviews  Review[]
 }
 
+
 model Product {
   id          String   @id @default(cuid())
   name        String
   slug        String   @unique
   description String
+  longDescription String?     
+  features        String[]    
   price       Float
   image       String
   category    String

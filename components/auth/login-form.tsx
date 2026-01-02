@@ -23,7 +23,7 @@ export function LoginForm() {
     const result = await login(formData) 
 
     if (result?.error) setError(result.error)
-    else window.location.href = "/products"
+    
 
     setPending(false)
   }

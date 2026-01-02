@@ -30,38 +30,69 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { name, description, price, category, stock, image, featured, brand, model, year } = body
 
-    // Generate slug from name
+    const {
+      name,
+      description,
+      longDescription,
+      features,
+      price,
+      category,
+      stock,
+      image,
+      featured,
+      brand,
+      model,
+      year,
+    } = body
+
+    if (!name || !description || !price || !image) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      )
+    }
+
+    // slug
     const slug = name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "")
 
-    // Determine inStock based on stock
-    const inStock = stock > 0
+    const parsedStock = Number(stock) || 0
 
     const product = await prisma.product.create({
       data: {
         name,
         slug,
         description,
-        price: Number.parseFloat(price),
+        longDescription: longDescription || null,
+        features: Array.isArray(features) ? features : [],
+
+        price: Number(price),
         category: category || "other",
-        stock: Number.parseInt(stock),
+        stock: parsedStock,
+        inStock: parsedStock > 0,
+
         image,
-        featured: featured || false,
-        inStock,
+        featured: Boolean(featured),
         isActive: true,
-        brand,
-        model,
-        year: year ? Number.parseInt(year) : null,
+
+        brand: brand || null,
+        model: model || null,
+        year: year ? Number(year) : null,
       },
     })
 
-    return NextResponse.json(product)
+    return NextResponse.json({
+      success: true,
+      data: { product },
+    })
   } catch (error) {
     console.error("[ADMIN_PRODUCTS_POST]", error)
-    return NextResponse.json({ error: "Failed to create product" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Failed to create product" },
+      { status: 500 }
+    )
   }
 }

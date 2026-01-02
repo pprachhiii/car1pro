@@ -1,61 +1,112 @@
 // Type definitions for the application
+// Synced with Prisma schema ✅
+
+/* ------------------------------------------------------------------ */
+/* ENUMS                                                               */
+/* ------------------------------------------------------------------ */
+
+export type UserRole = "user" | "admin"
+
+export type OrderStatus =
+  | "pending"
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled"
+
+export type PaymentStatus = "pending" | "paid" | "failed"
+
+/* ------------------------------------------------------------------ */
+/* USER                                                                */
+/* ------------------------------------------------------------------ */
 
 export interface User {
   id: string
   email: string
   name: string
   password: string
-  role: "user" | "admin"
+  role: UserRole
   createdAt: Date
   updatedAt: Date
 }
 
+/* ------------------------------------------------------------------ */
+/* PRODUCT                                                             */
+/* ------------------------------------------------------------------ */
 
 export interface Product {
   id: string
+
   name: string
   slug: string
   description: string
+  longDescription?: string | null
+  features: string[]
+
   price: number
   image: string
   category: string
-  brand?: string
-  model?: string
-  year?: number
+  brand?: string | null
+  model?: string | null
+  year?: number | null
+
   featured: boolean
+  isActive: boolean
   inStock: boolean
   stock: number
+
   createdAt: Date
   updatedAt: Date
+}
+
+/* ------------------------------------------------------------------ */
+/* CART                                                                */
+/* ------------------------------------------------------------------ */
+
+export interface Cart {
+  id: string
+  userId: string
+  total: number
+  updatedAt: Date
+  items: CartItem[]
 }
 
 export interface CartItem {
   id: string
+  cartId: string
   productId: string
   quantity: number
   price: number
 }
 
-export interface Cart {
-  id: string
-  userId: string
-  items: CartItem[]
-  total: number
-  updatedAt: Date
-}
+/* ------------------------------------------------------------------ */
+/* ORDER                                                               */
+/* ------------------------------------------------------------------ */
 
 export interface Order {
   id: string
   userId: string
-  items: CartItem[]
   total: number
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled"
-  shippingAddress: Address
+  status: OrderStatus
   paymentMethod: string
-  paymentStatus: "pending" | "paid" | "failed"
+  paymentStatus: PaymentStatus
+  shippingAddress: Address | Record<string, any>
   createdAt: Date
   updatedAt: Date
+  items: OrderItem[]
 }
+
+export interface OrderItem {
+  id: string
+  orderId: string
+  productId: string
+  quantity: number
+  price: number
+}
+
+/* ------------------------------------------------------------------ */
+/* ADDRESS                                                             */
+/* ------------------------------------------------------------------ */
 
 export interface Address {
   fullName: string
@@ -67,14 +118,22 @@ export interface Address {
   phone: string
 }
 
+/* ------------------------------------------------------------------ */
+/* REVIEW                                                              */
+/* ------------------------------------------------------------------ */
+
 export interface Review {
   id: string
   productId: string
   userId: string
   rating: number
-  comment: string
+  comment?: string | null
   createdAt: Date
 }
+
+/* ------------------------------------------------------------------ */
+/* API RESPONSE                                                        */
+/* ------------------------------------------------------------------ */
 
 export interface ApiResponse<T = any> {
   success: boolean

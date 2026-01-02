@@ -2,16 +2,12 @@ import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { AddToCartButton } from "@/components/add-to-cart-button"
+import { Product } from "@/lib/types"
 
-interface ProductCardProps {
-  id: string
-  name: string
-  slug: string
-  description: string
-  price: number
-  imageUrl: string
-  inStock: boolean
-}
+type ProductCardProps = Pick<
+  Product,
+  "id" | "name" | "slug" | "description" | "price" | "image" | "inStock"
+>
 
 export function ProductCard({
   id,
@@ -19,7 +15,7 @@ export function ProductCard({
   slug,
   description,
   price,
-  imageUrl,
+  image,
   inStock,
 }: ProductCardProps) {
   return (
@@ -27,7 +23,7 @@ export function ProductCard({
       <Link href={`/products/${slug}`} className="block">
         <div className="aspect-square bg-muted">
           <Image
-            src={imageUrl || "/placeholder.svg"}
+            src={image || "/placeholder.svg"}
             alt={name}
             width={400}
             height={400}

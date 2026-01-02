@@ -17,18 +17,7 @@ import {
 import { ProductForm } from "./product-form"
 import { Edit, Trash2, Plus } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-
-interface Product {
-  id: string
-  name: string
-  price: number
-  stock: number
-  category: string
-  image: string
-  featured: boolean
-  inStock: boolean
-  isActive: boolean
-}
+import { Product } from "@/lib/types"
 
 export function ProductList({ products: initialProducts }: { products: Product[] }) {
   const router = useRouter()
