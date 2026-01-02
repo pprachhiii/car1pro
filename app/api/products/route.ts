@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
+export const dynamic = "force-dynamic"
+
 /* ------------------------------------------------------------------ */
 /* GET PRODUCTS WITH FILTERS                                           */
 /* ------------------------------------------------------------------ */
@@ -45,7 +47,7 @@ export async function GET(request: NextRequest) {
       data: { products },
     })
   } catch (error) {
-    console.error(error)
+    console.error("[API_PRODUCTS_GET]", error)
     return NextResponse.json(
       { success: false, error: "Internal server error" },
       { status: 500 }
