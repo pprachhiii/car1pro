@@ -45,10 +45,15 @@ export function LoginForm() {
             <Input id="email" name="email" type="email" placeholder="you@example.com" required />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 relative">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" name="password" type={showPassword ? "text" : "password"} placeholder="••••••••" required />
-              
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              required
+            />
             <button
               type="button"
               className="absolute right-2 top-9 text-gray-500"
@@ -56,7 +61,6 @@ export function LoginForm() {
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
-            
           </div>
         </CardContent>
         <CardFooter className="mt-4">

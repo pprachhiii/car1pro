@@ -106,7 +106,7 @@ export function ProductList({ products: initialProducts }: { products: Product[]
                 </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell>{product.category}</TableCell>
-                <TableCell>${product.price.toFixed(2)}</TableCell>
+                <TableCell>₹{product.price.toFixed(2)}</TableCell>
                 <TableCell>
                   <Badge variant={product.stock < 5 ? "destructive" : "secondary"}>{product.stock}</Badge>
                 </TableCell>

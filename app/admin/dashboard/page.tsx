@@ -3,7 +3,7 @@ import { requireAdmin } from "@/lib/auth"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Users, Package, ShoppingCart, DollarSign, AlertTriangle } from "lucide-react"
+import { Users, Package, ShoppingCart, IndianRupee, AlertTriangle } from "lucide-react"
 
 export default async function AdminDashboard() {
   // Protect page
@@ -61,7 +61,7 @@ export default async function AdminDashboard() {
     {
       title: "Total Revenue",
       value: `₹${totalRevenue.toFixed(2)}`,
-      icon: DollarSign,
+      icon: IndianRupee,
       description: "From paid orders",
     },
   ]

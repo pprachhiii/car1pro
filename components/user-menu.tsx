@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { User, ShoppingBag, LogOut } from "lucide-react"
 import type { SessionUser } from "@/lib/auth"
+import Link from "next/link"
 
 interface UserMenuProps {
   user: SessionUser
@@ -44,10 +45,13 @@ export function UserMenu({ user }: UserMenuProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <ShoppingBag className="mr-2 h-4 w-4" />
-          <span>My Orders</span>
+        <DropdownMenuItem asChild>
+          <Link href="/orders" className="flex items-center">
+            <ShoppingBag className="mr-2 h-4 w-4" />
+            <span>My Orders</span>
+          </Link>
         </DropdownMenuItem>
+
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-destructive focus:text-destructive"

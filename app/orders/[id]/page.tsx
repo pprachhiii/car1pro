@@ -76,7 +76,7 @@ export default async function OrderConfirmationPage({
                       </p>
                     </div>
                     <p className="font-medium">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      ₹{(item.price * item.quantity).toFixed(2)}
                     </p>
                   </div>
                 ))}
@@ -85,7 +85,7 @@ export default async function OrderConfirmationPage({
               <div className="border-t pt-4">
                 <div className="flex justify-between text-xl font-bold">
                   <span>Total</span>
-                  <span>${order.total.toFixed(2)}</span>
+                  <span>₹{order.total.toFixed(2)}</span>
                 </div>
               </div>
 
