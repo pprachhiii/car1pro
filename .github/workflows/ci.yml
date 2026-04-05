@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install dependencies
         run: npm install
@@ -28,12 +28,20 @@ jobs:
       - name: Run lint
         run: npm run lint
 
-      - name: Run tests (if you have tests)
-        run: npm test || echo "No tests defined, skipping"
+      - name: Run tests (optional)
+        run: |
+          if [ -f package.json ] && grep -q "\"test\"" package.json; then
+            npm test
+          else
+            echo "No tests defined, skipping"
+          fi
 
   deploy:
     needs: build-test
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -41,10 +49,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install dependencies
         run: npm install
+
+      - name: Generate Prisma client
+        run: npx prisma generate
 
       - name: Build Next.js project
         run: npm run build
