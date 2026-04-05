@@ -10,7 +10,6 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      # Updated to v4 for Node 20+ compatibility
       - uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -19,12 +18,15 @@ jobs:
           node-version: 24
           cache: 'npm'
 
-      - name: Install and Test
+      - name: Install and Lint
         run: |
           npm ci
-          # Ensure prisma is available; removing --no-install can help if the binary is missing
           npx prisma generate
-          npm run lint --if-present
+          npm run lint
+        working-directory: ./
+
+      - name: Run Tests
+        run: |
           if grep -q "\"test\":" package.json; then
             npm test
           else
@@ -35,6 +37,7 @@ jobs:
   deploy:
     needs: build-test
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
 
@@ -52,7 +55,7 @@ jobs:
         working-directory: ./
 
       - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v20 # Using a more maintained Vercel action
+        uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
