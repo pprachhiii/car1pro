@@ -2,7 +2,8 @@ name: CI/CD Pipeline
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  ACTIONS_ALLOW_UNSECURE_NODE_VERSION: true 
+  ACTIONS_ALLOW_UNSECURE_NODE_VERSION: true
+  NODE_OPTIONS: "--max_old_space_size=4096"
 
 on:
   push:
@@ -21,20 +22,15 @@ jobs:
           node-version: 24
           cache: 'npm'
 
-      - run: npm ci
-        working-directory: ./
-
-      - run: npx --no-install prisma generate
-        working-directory: ./
-
-      - run: npm run lint
-        working-directory: ./
-
       - run: |
+          npm ci
+          npx --no-install prisma generate
+          npm run lint
           if [ -f package.json ] && grep -q "\"test\"" package.json; then
             npm test
           else
             echo "No tests defined, skipping"
+          fi
         working-directory: ./
 
   deploy:
@@ -48,19 +44,15 @@ jobs:
           node-version: 24
           cache: 'npm'
 
-      - run: npm ci
+      - run: |
+          npm ci
+          npx --no-install prisma generate
+          npm run build
         working-directory: ./
 
-      - run: npx --no-install prisma generate
-        working-directory: ./
-
-      - run: npm run build
-        working-directory: ./
-
-      - uses: amondnet/vercel-action@v20
+      - uses: vercel/action@v3
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./
           prod: true
