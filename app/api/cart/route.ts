@@ -1,23 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getSessionFromBearerToken } from "@/lib/auth"
+import { getSession } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
 
-export async function GET(request: NextRequest) {
-  try {
-    const token = request.headers.get("authorization")?.replace("Bearer ", "")
-    if (!token) {
-      return NextResponse.json({ success: false, error: "No token provided" }, { status: 401 })
-    }
+export const dynamic = "force-dynamic"
 
-    const user = await getSessionFromBearerToken(token)
-    if (!user) {
-      return NextResponse.json({ success: false, error: "Invalid token" }, { status: 401 })
-    }
-
-    return NextResponse.json({
-      success: true,
-      data: { user },
-    })
-  } catch (error) {
-    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 })
-  }
+export async function GET(_request: NextRequest) {
+  const session = await getSession()
+  if (!session) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
+  const cart = await prisma.cart.findFirst({ where: { userId: session.id }, include: { items: { include: { product: true } } } })
+  return NextResponse.json({ success: true, data: { cart } })
 }
