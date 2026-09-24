@@ -1,48 +1,12 @@
 import Link from "next/link"
+import styles from "./CategoriesSection.module.css"
+
+const categories = [
+  ["washing-cleaning", "Washing & Cleaning", "Premium soaps, shampoos, and cleaning solutions"],
+  ["polishes-protectants", "Polishes & Protectants", "Waxes, sealants, and ceramic coatings"],
+  ["accessories-tools", "Accessories & Tools", "Professional-grade detailing equipment"],
+]
 
 export default function CategoriesSection() {
-  return (
-    <section className="py-16 bg-muted/30">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-8 text-center">
-          Shop by Category
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Link href="/products?category=washing-cleaning" className="group">
-            <div className="bg-card rounded-lg p-8 hover:shadow-lg transition-shadow">
-              <h3 className="text-xl font-semibold mb-2 group-hover:text-accent transition-colors">
-                Washing & Cleaning
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                Premium soaps, shampoos, and cleaning solutions
-              </p>
-            </div>
-          </Link>
-
-          <Link href="/products?category=polishes-protectants" className="group">
-            <div className="bg-card rounded-lg p-8 hover:shadow-lg transition-shadow">
-              <h3 className="text-xl font-semibold mb-2 group-hover:text-accent transition-colors">
-                Polishes & Protectants
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                Waxes, sealants, and ceramic coatings
-              </p>
-            </div>
-          </Link>
-
-          <Link href="/products?category=accessories-tools" className="group">
-            <div className="bg-card rounded-lg p-8 hover:shadow-lg transition-shadow">
-              <h3 className="text-xl font-semibold mb-2 group-hover:text-accent transition-colors">
-                Accessories & Tools
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                Professional-grade detailing equipment
-              </p>
-            </div>
-          </Link>
-        </div>
-      </div>
-    </section>
-  )
+  return <section className={styles.section}><div className={styles.container}><h2 className={styles.title}>Shop by Category</h2><div className={styles.grid}>{categories.map(([slug, title, description]) => <Link key={slug} href={`/products?category=${slug}`} className={styles.link}><div className={styles.card}><h3 className={styles.cardTitle}>{title}</h3><p className={styles.description}>{description}</p></div></Link>)}</div></div></section>
 }
